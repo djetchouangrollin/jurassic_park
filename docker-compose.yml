@@ -15,9 +15,6 @@ services:
       - ./mysql-init-test.sql:/docker-entrypoint-initdb.d/init-test.sql
     ports:
       - "3307:3306"  # Change le port local exposé à 3307
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
     init: true
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "mysql", "-u", "root", "-proot"]
