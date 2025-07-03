@@ -1,0 +1,89 @@
+name: CI Validation
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Linting
+      - name: Lint Backend
+        working-directory: backend
+        run: |
+          npm install
+          npm run lint
+
+      - name: Lint Frontend
+        working-directory: frontend
+        run: |
+          npm install
+          npm run lint
+
+      # Build et tests Backend
+      - name: Build and Test Backend
+        working-directory: backend
+        run: |
+          npm install
+          npm run build
+          npm run test:unit
+          npm run test:integration
+          npm run test:functional
+
+      # Build et tests Frontend
+      - name: Build and Test Frontend
+        working-directory: frontend
+        run: |
+          npm install
+          npm run build
+          npm run test
+
+      # Build Docker
+      - name: Build Docker Images
+        run: |
+          docker compose build
+
+      # Scan de sécurité avec Trivy
+      - name: Security Scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          severity: 'CRITICAL,HIGH'
+          format: 'template'
+          template: '@columns'
+          ignore-unfixed: true
+
+      # Push Docker Images
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker Images
+        run: |
+          docker compose push
+
+      # Tag and push images with version
+      - name: Tag and Push Images with Version
+        run: |
+          # Get latest git tag
+          git fetch --tags
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          
+          # Tag and push backend image
+          docker tag jurassic-park/backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/jurassic-park-backend:$LATEST_TAG
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/jurassic-park-backend:$LATEST_TAG
+          
+          # Tag and push frontend image
+          docker tag jurassic-park/frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/jurassic-park-frontend:$LATEST_TAG
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/jurassic-park-frontend:$LATEST_TAG
