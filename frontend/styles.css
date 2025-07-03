@@ -1,0 +1,61 @@
+/* Styles spécifiques */
+.badge {
+    padding: 0.5em 0.8em;
+}
+
+.badge.low {
+    background-color: #198754;
+}
+
+.badge.medium {
+    background-color: #ffc107;
+}
+
+.badge.high {
+    background-color: #dc3545;
+}
+
+.badge.active {
+    background-color: #6c757d;
+}
+
+.badge.resolved {
+    background-color: #198754;
+}
+
+.alert {
+    margin: 1rem 0;
+}
+
+/* Styles pour le tableau */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
+
+/* Styles pour les modales */
+.modal-content {
+    border-radius: 0.5rem;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

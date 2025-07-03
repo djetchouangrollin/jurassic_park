@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker d'Incidents - Jurassic Park</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Tracker d'Incidents</h1>
+
+        <!-- Filtres -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <select id="filterStatus" class="form-select">
+                    <option value="">Tous les statuts</option>
+                    <option value="active">Actif</option>
+                    <option value="resolved">Résolu</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <select id="filterPriority" class="form-select">
+                    <option value="">Toutes les priorités</option>
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyenne</option>
+                    <option value="high">Haute</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tableau des incidents -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Liste des Incidents</h5>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createIncidentModal">
+                        Nouvel Incident
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Urgence</th>
+                                <th>Statut</th>
+                                <th>Localisation</th>
+                                <th>Description</th>
+                                <th>Rapporté par</th>
+                                <th>Créé le</th>
+                                <th>Résolu le</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incidentsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Créer Incident -->
+    <div class="modal fade" id="createIncidentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nouvel Incident</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createIncidentForm">
+                        <div class="mb-3">
+                            <label class="form-label">Titre</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="type" required>
+                                <option value="">Sélectionnez un type</option>
+                                <option value="dinosaur">Dinosaure</option>
+                                <option value="security">Sécurité</option>
+                                <option value="technical">Technique</option>
+                                <option value="medical">Médical</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Urgence</label>
+                            <select class="form-select" name="urgency" required>
+                                <option value="">Sélectionnez une urgence</option>
+                                <option value="low">Faible</option>
+                                <option value="medium">Moyenne</option>
+                                <option value="high">Haute</option>
+                                <option value="critical">Critique</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Localisation</label>
+                            <input type="text" class="form-control" name="location" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="submitCreate">Créer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Mettre à jour -->
+    <div class="modal fade" id="updateIncidentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mettre à jour l'Incident</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateIncidentForm">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label class="form-label">Statut</label>
+                            <select class="form-select" name="status" required>
+                                <option value="open">Ouvert</option>
+                                <option value="resolved">Résolu</option>
+                                <option value="high">Haute</option>
+                                <option value="critical">Critique</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Commentaire</label>
+                            <textarea class="form-control" name="comment" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="submitUpdate">Mettre à jour</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js" defer></script>
+</body>
+</html>
