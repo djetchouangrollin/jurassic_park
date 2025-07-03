@@ -10,7 +10,7 @@
     "build": "tsc",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint --config src/config/.eslintrc.json src/**/*.ts",
     "docker:build": "docker build -t jurassic-park/backend .",
     "docker:run": "docker run -p 3000:3000 jurassic-park/backend"
   },
