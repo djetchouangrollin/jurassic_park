@@ -70,7 +70,7 @@ jobs:
           ignore-unfixed: true
 
       # Déploiement sur la branche dev
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (dev)
         if: github.ref == 'refs/heads/dev'
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -78,9 +78,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
+      - name: Login to Amazon ECR (dev)
         if: github.ref == 'refs/heads/dev'
-        id: login-ecr
+        id: login-ecr-dev
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Deploy to EKS (dev)
@@ -112,32 +112,11 @@ jobs:
 
       - name: Login to Amazon ECR (main)
         if: github.ref == 'refs/heads/main'
-        id: login-ecr
+        id: login-ecr-main
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Deploy to EKS (main)
         if: github.ref == 'refs/heads/main'
-        uses: azure/k8s-deploy@v1
-        with:
-          kubernetes-context: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
-          namespace: jurassic-park
-          manifests: |
-            k8s/deployments/backend-deployment.yaml
-            k8s/deployments/frontend-deployment.yaml
-            k8s/deployments/mysql-deployment.yaml
-            k8s/services/backend-service.yaml
-            k8s/services/frontend-service.yaml
-            k8s/services/mysql-service.yaml
-            k8s/storage/mysql-pvc.yaml
-          images: |
-            ${{ secrets.AWS_ECR_REGISTRY }}/jurassic-park-backend:latest
-            ${{ secrets.AWS_ECR_REGISTRY }}/jurassic-park-frontend:latest
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Deploy to EKS
         uses: azure/k8s-deploy@v1
         with:
           kubernetes-context: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
