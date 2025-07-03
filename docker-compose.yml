@@ -9,6 +9,10 @@ services:
       MYSQL_ROOT_HOST: '%'
       MYSQL_LOG_CONSOLE: 1
       MYSQL_DEFAULT_AUTHENTICATION_PLUGIN: mysql_native_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql-init-test.sql:/docker-entrypoint-initdb.d/init-test.sql
     ports:
       - "3307:3306"  # Change le port local exposé à 3307
     volumes:
@@ -24,7 +28,9 @@ services:
       - app-network
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      target: production
     ports:
       - "3002:3002"
     env_file: .env
@@ -39,6 +45,30 @@ services:
       timeout: 10s
       retries: 5
     restart: unless-stopped
+
+  backend-test:
+    build:
+      context: ./backend
+      target: tester
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: jurassic_park_test
+      DB_USER: root
+      DB_PASSWORD: root
+      JWT_SECRET: root
+      JWT_EXPIRES_IN: 24h
+      SWAGGER_API_URL: /api-docs
+      TEST_DB_NAME: jurassic_park_test
+      RATE_LIMIT_WINDOW: 15
+      RATE_LIMIT_MAX: 100
+      CORS_ORIGIN: http://localhost:3001
+      DOCKER_NODE_VERSION: 20-alpine
+    networks:
+      - app-network
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   frontend:
     build: ./frontend

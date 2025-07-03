@@ -12,6 +12,19 @@ COPY . .
 # Compiler le code TypeScript
 RUN npm run build
 
+# Stage de test
+FROM node:20-alpine AS tester
+
+WORKDIR /app
+
+# Copier le code et les dépendances depuis le builder
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+
+# Exécuter les tests
+RUN npm test
+
 # Stage de production
 FROM node:20-alpine
 
